@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('http://www.hhchenchong.com').hostname,
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.7.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":"ture","style":"mac"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: true,
+    lazyload: false,
+    pangu: true,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="本文介绍程序控制指令">
+<meta property="og:type" content="article">
+<meta property="og:title" content="微机原理与接口技术之程序控制指令">
+<meta property="og:url" content="http://www.hhchenchong.com/2019/04/12/bd47f1a6.html">
+<meta property="og:site_name" content="Saint Rainbow">
+<meta property="og:description" content="本文介绍程序控制指令">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/12/bd47f1a6/1555067841005.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/12/bd47f1a6/1555067914029.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/12/bd47f1a6/1555067880057.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/12/bd47f1a6/1555241566572.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/12/bd47f1a6/1555241604135.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/12/bd47f1a6/1555242335192.png">
+<meta property="article:published_time" content="2019-04-12T10:53:34.000Z">
+<meta property="article:modified_time" content="2020-02-13T12:23:01.000Z">
+<meta property="article:author" content="Chen Chong">
+<meta property="article:tag" content="微机原理与接口技术">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://www.hhchenchong.com/2019/04/12/bd47f1a6/1555067841005.png">
+
+<link rel="canonical" href="http://www.hhchenchong.com/2019/04/12/bd47f1a6.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+<script>
+    (function(){
+        if(''){
+            if (prompt('��������������') !== ''){
+                alert('�������');
+                history.back();
+            }
+        }
+    })();
+</script>
+  <title>微机原理与接口技术之程序控制指令 | Saint Rainbow</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="\assets\css\APlayer.min.css" class="aplayer-style-marker">
+<script src="\assets\js\APlayer.min.js" class="aplayer-script-marker"></script>
+<script src="\assets\js\Meting.min.js" class="meting-script-marker"></script>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Saint Rainbow</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">世界很大，我却很小</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-fw fa-calendar"></i>日程表</a>
+
+  </li>
+        <li class="menu-item menu-item-软件">
+
+    <a href="/software/" rel="section"><i class="fa fa-fw fa-laptop"></i>软件</a>
+
+  </li>
+        <li class="menu-item menu-item-电子书">
+
+    <a href="/ebook/" rel="section"><i class="fa fa-fw fa-book"></i>电子书</a>
+
+  </li>
+        <li class="menu-item menu-item-相册">
+
+    <a href="/photo/" rel="section"><i class="fa fa-fw fa-camera"></i>相册</a>
+
+  </li>
+        <li class="menu-item menu-item-日记">
+
+    <a href="/diary/" rel="section"><i class="fa fa-fw fa-book"></i>日记</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/hhchenchong" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.hhchenchong.com/2019/04/12/bd47f1a6.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Chen Chong">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Saint Rainbow">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          微机原理与接口技术之程序控制指令
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-04-12 18:53:34" itemprop="dateCreated datePublished" datetime="2019-04-12T18:53:34+08:00">2019-04-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-13 20:23:01" itemprop="dateModified" datetime="2020-02-13T20:23:01+08:00">2020-02-13</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BE%AE%E6%9C%BA%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8E%A5%E5%8F%A3%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index">
+                    <span itemprop="name">微机原理与接口技术</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2019/04/12/bd47f1a6.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2019/04/12/bd47f1a6.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <!--less-->
+<p>本文介绍程序控制指令</p>
+<a id="more"></a>
+
+    <div id="aplayer-liSFDhIl" class="aplayer aplayer-tag-marker meting-tag-marker" data-id="33991110" data-server="netease" data-type="song" data-mode="circulation" data-autoplay="true" data-mutex="true" data-listmaxheight="340px" data-preload="auto" data-theme="#FF4081"></div>
+<p>今日音乐：糟糕情书<br>
+<em>可慧心如你 能懂吧</em><br>
+<em>不难了悟：</em><br>
+<em>「蜜语甜言，乃世间一等废物」</em><br>
+<em>可除此外我穷如 丐帮小卒</em><br>
+<em>从未说出 爱你二字可倘若</em><br>
+<em>——「我不爱你。」</em><br>
+<em>你会信吗？</em><br>
+​	概述：8086/8088CPU使用CS寄存器和IP指令指针来寻址，用以取出指令并执行，转移类指令通过改变CS和IP的值，来达到改变程序执行的顺序的目的。</p>
+<p>​	转移指令分为段内转移和段间转移两类，段内转移不需要改变段地址，只改变IP，而段间转移，改变CS的同时，改变IP</p>
+<h2 id="1无条件转移指令"><a class="markdownIt-Anchor" href="#1无条件转移指令"></a> 1.无条件转移指令</h2>
+<p>​	一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JMP OPRD</span><br></pre></td></tr></table></figure>
+<p>​	功能：程序无条件转移到OPRD指示的位置</p>
+<p>​	该指令分为直接转移和间接转移两种，直接转移又可分为短程（SHORT）和近程（NEAR）和远程（FAR）三种形式。在直接转移中OPRD通常是以标号给出的，由此标号直接表示出转移的位置。</p>
+<h3 id="1直接转移指令"><a class="markdownIt-Anchor" href="#1直接转移指令"></a> 1）直接转移指令</h3>
+<h4 id="1短程转移"><a class="markdownIt-Anchor" href="#1短程转移"></a> ①短程转移</h4>
+<p>​	一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JMP SHORT　OPRD</span><br></pre></td></tr></table></figure>
+<h4 id="2近程转移"><a class="markdownIt-Anchor" href="#2近程转移"></a> ②近程转移</h4>
+<p>​	一般格式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JMP NEAR PTR OPRD 或者 JMP OPRD；NEAR可以省略</span><br></pre></td></tr></table></figure>
+<p>​	对于短程转移和近程转移，只需要修改IP的值，短程IP+8位的位移量，近程IP+16位的位移量，转移的地址必须在范围内，默认近程转移。</p>
+<h4 id="3远程转移"><a class="markdownIt-Anchor" href="#3远程转移"></a> ③远程转移</h4>
+<p>​	一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JMP FAR PTR OPRD</span><br></pre></td></tr></table></figure>
+<p>​	远程转移是段间的转移，目的地址和JMP指令不在同一代码段中，执行需要修改CS和IP的值。</p>
+<p>​	例如：</p>
+<p><img src="/2019/04/12/bd47f1a6/1555067841005.png" alt="1555067841005"></p>
+<p>​	运行到JMP AGAIN指令时：</p>
+<p><img src="/2019/04/12/bd47f1a6/1555067914029.png" alt="1555067914029"></p>
+<p>​	执行完：</p>
+<p><img src="/2019/04/12/bd47f1a6/1555067880057.png" alt="1555067880057"></p>
+<h3 id="2间接转移指令"><a class="markdownIt-Anchor" href="#2间接转移指令"></a> 2）间接转移指令</h3>
+<p>​	间接转移指令的OPRD一般是一个存储器操作数，可以由直接选址方式的寻址方式给出或存储器寻址方式给出。真正的转移位置由存储其中的内容确定。同样分为段间转移和段内转移两类。</p>
+<h4 id="1段内间接转移指令"><a class="markdownIt-Anchor" href="#1段内间接转移指令"></a> ①段内间接转移指令</h4>
+<p>​	一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JMP WORD PTR OPRD 或者 JMP OPRD ；OPRD为一寄存器</span><br></pre></td></tr></table></figure>
+<p>​	例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JMP WORD PTR[SI]</span><br></pre></td></tr></table></figure>
+<p>​	该指令按照DS*16+SI找到操作数的位置，然后取出SI的值送到IP实现段内转移</p>
+<h4 id="2段间间接转移指令"><a class="markdownIt-Anchor" href="#2段间间接转移指令"></a> ②段间间接转移指令</h4>
+<p>​	一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JMP DWORD PTR OPRD</span><br></pre></td></tr></table></figure>
+<p>​	例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JMP DWORD PTR[100H]</span><br></pre></td></tr></table></figure>
+<p>​	该指令首先取出第一个字送到IP，然后取出第二个字送到CS</p>
+<h2 id="2条件转移指令"><a class="markdownIt-Anchor" href="#2条件转移指令"></a> 2.条件转移指令</h2>
+<p>8086共提供18条不同的条件转移指令，他们可以根据标志寄存器中的值或者比较两数的结果或测试的结果进行转移</p>
+<h3 id="1判断标志位转移指令"><a class="markdownIt-Anchor" href="#1判断标志位转移指令"></a> 1）判断标志位转移指令</h3>
+<h4 id="1结果为零结果不为零转移指令"><a class="markdownIt-Anchor" href="#1结果为零结果不为零转移指令"></a> ①结果为零/结果不为零转移指令</h4>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">JZ&#x2F;JE OPRD；结果为零转移指令</span><br><span class="line">JNZ&#x2F;JNE OPRD；结果不为零转移指令</span><br></pre></td></tr></table></figure>
+<h4 id="2结果为负结果不为负转移指令"><a class="markdownIt-Anchor" href="#2结果为负结果不为负转移指令"></a> ②结果为负/结果不为负转移指令</h4>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">JS OPRD ； 结果为负转移指令</span><br><span class="line">JNS OPRD ；结果不为负转移指令</span><br></pre></td></tr></table></figure>
+<h4 id="3奇偶校验为偶奇偶校验为奇"><a class="markdownIt-Anchor" href="#3奇偶校验为偶奇偶校验为奇"></a> ③奇偶校验为偶/奇偶校验为奇</h4>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">JP&#x2F;JPE OPRD ；结果为偶转移指令</span><br><span class="line">JNP&#x2F;JPO OPRD；结果为奇转移指令</span><br></pre></td></tr></table></figure>
+<h4 id="4结果溢出结果不溢出转移指令"><a class="markdownIt-Anchor" href="#4结果溢出结果不溢出转移指令"></a> ④结果溢出/结果不溢出转移指令</h4>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">JO OPRD ； 结果溢出转移指令</span><br><span class="line">JNO OPRD； 结果不溢出转移指令</span><br></pre></td></tr></table></figure>
+<h4 id="5进位借位不进位借位转移指令"><a class="markdownIt-Anchor" href="#5进位借位不进位借位转移指令"></a> ⑤进位（借位）/不进位（借位）转移指令</h4>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">JC OPRD；结果有进位（借位）转移指令</span><br><span class="line">JNC OPRD；结果无进位（借位）转移指令</span><br></pre></td></tr></table></figure>
+<h3 id="2无符号数比较转移指令"><a class="markdownIt-Anchor" href="#2无符号数比较转移指令"></a> 2）无符号数比较转移指令</h3>
+<p>在CMP指令之后</p>
+<h4 id="1高于不小于等于转移指令"><a class="markdownIt-Anchor" href="#1高于不小于等于转移指令"></a> ①高于/不小于等于转移指令</h4>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JA&#x2F;JNBE OPRD ； ABOVE or Not Below and equal</span><br></pre></td></tr></table></figure>
+<h4 id="2高于等于不小于转移指令"><a class="markdownIt-Anchor" href="#2高于等于不小于转移指令"></a> ②高于等于/不小于转移指令</h4>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JAE&#x2F;JNB OPRD</span><br></pre></td></tr></table></figure>
+<h4 id="3小于不大于等于转移指令"><a class="markdownIt-Anchor" href="#3小于不大于等于转移指令"></a> ③小于/不大于等于转移指令</h4>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JB&#x2F;JNAE OPRD</span><br></pre></td></tr></table></figure>
+<h4 id="4小于等于不大于转移指令"><a class="markdownIt-Anchor" href="#4小于等于不大于转移指令"></a> ④小于等于/不大于转移指令</h4>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JBE&#x2F;JNA OPRD</span><br></pre></td></tr></table></figure>
+<h3 id="3有符号数比较转移指令"><a class="markdownIt-Anchor" href="#3有符号数比较转移指令"></a> 3）有符号数比较转移指令</h3>
+<h4 id="1高于不小于等于转移指令-2"><a class="markdownIt-Anchor" href="#1高于不小于等于转移指令-2"></a> ①高于/不小于等于转移指令</h4>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JG&#x2F;JNLE OPRD</span><br></pre></td></tr></table></figure>
+<h4 id="2高于等于不小于转移指令-2"><a class="markdownIt-Anchor" href="#2高于等于不小于转移指令-2"></a> ②高于等于/不小于转移指令</h4>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JGE&#x2F;JNL OPRD</span><br></pre></td></tr></table></figure>
+<h4 id="3小于不大于等于转移指令-2"><a class="markdownIt-Anchor" href="#3小于不大于等于转移指令-2"></a> ③小于/不大于等于转移指令</h4>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JL&#x2F;JNGE OPRD</span><br></pre></td></tr></table></figure>
+<h4 id="4小于等于不大于转移指令-2"><a class="markdownIt-Anchor" href="#4小于等于不大于转移指令-2"></a> ④小于等于/不大于转移指令</h4>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JLE&#x2F;JNG OPRD</span><br></pre></td></tr></table></figure>
+<h3 id="4测试转移指令"><a class="markdownIt-Anchor" href="#4测试转移指令"></a> 4）测试转移指令</h3>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JCXZ OPRD</span><br></pre></td></tr></table></figure>
+<p>功能：CX = 0时转移；</p>
+<h2 id="3循环控制类指令"><a class="markdownIt-Anchor" href="#3循环控制类指令"></a> 3.循环控制类指令</h2>
+<h3 id="1cx-0循环指令"><a class="markdownIt-Anchor" href="#1cx-0循环指令"></a> 1）CX ≠ 0循环指令</h3>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LOOP OPRD</span><br></pre></td></tr></table></figure>
+<p>功能：CX = CX - 1 如果CX ≠ 0，则循环</p>
+<h3 id="2cx-0-zf-0-循环指令"><a class="markdownIt-Anchor" href="#2cx-0-zf-0-循环指令"></a> 2）CX ≠ 0 &amp;&amp; ZF = 0 循环指令</h3>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LOOPNZ&#x2F;LOOPNE OPRD</span><br></pre></td></tr></table></figure>
+<p>功能：CX = CX-1，如果CX ≠ 0，并且 ZF = 0， 则循环</p>
+<h3 id="3cx-0-zf-1-循环指令"><a class="markdownIt-Anchor" href="#3cx-0-zf-1-循环指令"></a> 3）CX ≠ 0 &amp;&amp; ZF = 1 循环指令</h3>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LOOPZ&#x2F;LOOPE OPRD</span><br></pre></td></tr></table></figure>
+<p>功能：cx = cx - 1,如果CX ≠ 0&amp;&amp;ZF = 1循环</p>
+<p>例：求首地址为ARRAY中M个数据之和：</p>
+<p><img src="/2019/04/12/bd47f1a6/1555241566572.png" alt="1555241566572"></p>
+<p>结果为：</p>
+<p><img src="/2019/04/12/bd47f1a6/1555241604135.png" alt="1555241604135"></p>
+<p>3*16+7 = 55</p>
+<p>例：有以字符串，存放在ASCII STR开始的内存区域内，字符串的长度为L，在字符串中查找空格（20H），找到则继续运行，找不带转到NOTFOUND：</p>
+<p><img src="/2019/04/12/bd47f1a6/1555242335192.png" alt="1555242335192"></p>
+<p>可以看出，当CX＝4时，即程序在检查第六个字符时，ZF = 1，LOOPNZ跳出循环</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\03\31\91de029c.html" rel="bookmark">微机原理及接口技术之数据传送指令</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\03\31\75142c3c.html" rel="bookmark">微机原理与接口技术之寻址方式</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\04\06\3729b804.html" rel="bookmark">微机原理与接口技术之原码反码和补码</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\04\19\71081ab0.html" rel="bookmark">微机原理与接口技术之标志处理和CPU控制类指令</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\04\17\d7d54c39.html" rel="bookmark">微机原理与接口技术之字符串操作</a></div>
+    </li>
+  </ul>
+
+        <div class="reward-container">
+  <div>喜欢就支持我吧!</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="Chen Chong 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.png" alt="Chen Chong 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E5%BE%AE%E6%9C%BA%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8E%A5%E5%8F%A3%E6%8A%80%E6%9C%AF/" rel="tag"><i class="fa fa-tag"></i> 微机原理与接口技术</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/04/10/24b395cd.html" rel="prev" title="微机原理与接口技术之汇编IDE的搭建">
+      <i class="fa fa-chevron-left"></i> 微机原理与接口技术之汇编IDE的搭建
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/04/17/d7d54c39.html" rel="next" title="微机原理与接口技术之字符串操作">
+      微机原理与接口技术之字符串操作 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1无条件转移指令"><span class="nav-text"> 1.无条件转移指令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1直接转移指令"><span class="nav-text"> 1）直接转移指令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1短程转移"><span class="nav-text"> ①短程转移</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2近程转移"><span class="nav-text"> ②近程转移</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3远程转移"><span class="nav-text"> ③远程转移</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2间接转移指令"><span class="nav-text"> 2）间接转移指令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1段内间接转移指令"><span class="nav-text"> ①段内间接转移指令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2段间间接转移指令"><span class="nav-text"> ②段间间接转移指令</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2条件转移指令"><span class="nav-text"> 2.条件转移指令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1判断标志位转移指令"><span class="nav-text"> 1）判断标志位转移指令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1结果为零结果不为零转移指令"><span class="nav-text"> ①结果为零&#x2F;结果不为零转移指令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2结果为负结果不为负转移指令"><span class="nav-text"> ②结果为负&#x2F;结果不为负转移指令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3奇偶校验为偶奇偶校验为奇"><span class="nav-text"> ③奇偶校验为偶&#x2F;奇偶校验为奇</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4结果溢出结果不溢出转移指令"><span class="nav-text"> ④结果溢出&#x2F;结果不溢出转移指令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5进位借位不进位借位转移指令"><span class="nav-text"> ⑤进位（借位）&#x2F;不进位（借位）转移指令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2无符号数比较转移指令"><span class="nav-text"> 2）无符号数比较转移指令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1高于不小于等于转移指令"><span class="nav-text"> ①高于&#x2F;不小于等于转移指令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2高于等于不小于转移指令"><span class="nav-text"> ②高于等于&#x2F;不小于转移指令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3小于不大于等于转移指令"><span class="nav-text"> ③小于&#x2F;不大于等于转移指令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4小于等于不大于转移指令"><span class="nav-text"> ④小于等于&#x2F;不大于转移指令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3有符号数比较转移指令"><span class="nav-text"> 3）有符号数比较转移指令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1高于不小于等于转移指令-2"><span class="nav-text"> ①高于&#x2F;不小于等于转移指令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2高于等于不小于转移指令-2"><span class="nav-text"> ②高于等于&#x2F;不小于转移指令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3小于不大于等于转移指令-2"><span class="nav-text"> ③小于&#x2F;不大于等于转移指令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4小于等于不大于转移指令-2"><span class="nav-text"> ④小于等于&#x2F;不大于转移指令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4测试转移指令"><span class="nav-text"> 4）测试转移指令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3循环控制类指令"><span class="nav-text"> 3.循环控制类指令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1cx-0循环指令"><span class="nav-text"> 1）CX ≠ 0循环指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2cx-0-zf-0-循环指令"><span class="nav-text"> 2）CX ≠ 0 &amp;&amp; ZF &#x3D; 0 循环指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3cx-0-zf-1-循环指令"><span class="nav-text"> 3）CX ≠ 0 &amp;&amp; ZF &#x3D; 1 循环指令</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chen Chong"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Chen Chong</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/hhchenchong" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;hhchenchong" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/hhchenchong@163.com" title="E-Mail → hhchenchong@163.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+     <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=448184048&auto=0&height=66"></iframe>
+
+今日诗词：<br>
+<span id="jinrishici-sentence">正在加载今日诗词....</span><br>
+
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+<img src="https://api.xygeng.cn/bing/1920.php" alt="Bing每日图片超高清" />
+
+<!-- hhchenchong -->
+今日天气：<br>
+<div id="weather-view-he"></div>
+<script>
+WIDGET = {ID: 'ESvcuq32Fw'};
+</script>
+<script type="text/javascript" src="https://apip.weatherdt.com/view/static/js/r.js?v=1111"></script>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="noopener" target="_blank">鲁ICP备20004309号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chen Chong</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el: '#valine-comments',
+      verify: false,
+      notify: true,
+      appId: 'L2EBDsymQXKYwJWyF8ACJ4de-gzGzoHsz',
+      appKey: '4hFeY20jBK2eAtpoNv91VDsn',
+      placeholder: "欢迎评论",
+      avatar: 'mm',
+      meta: guest,
+      pageSize: '10' || 10,
+      visitor: false,
+      lang: '' || 'zh-cn',
+      path: location.pathname,
+      recordIP: false,
+      serverURLs: ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

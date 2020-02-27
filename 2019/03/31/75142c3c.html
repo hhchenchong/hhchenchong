@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('http://www.hhchenchong.com').hostname,
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.7.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":"ture","style":"mac"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: true,
+    lazyload: false,
+    pangu: true,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="本文介绍8086和8088的寻址方式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="微机原理与接口技术之寻址方式">
+<meta property="og:url" content="http://www.hhchenchong.com/2019/03/31/75142c3c.html">
+<meta property="og:site_name" content="Saint Rainbow">
+<meta property="og:description" content="本文介绍8086和8088的寻址方式">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/75142c3c/985a59b4d90fe07b24443f652c2487a9.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/75142c3c/faa1ef2445ad507e7916713ecebf3ddc.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/75142c3c/586e131653ba4d215a6ad075cc0aa59b.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/75142c3c/2c5e05a4fad101c3673ce8a35a999540.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/75142c3c/c08cf3d5868a85362a400898ce6834ec.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/75142c3c/5fb422d23d7d8326363c436032158b34.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/75142c3c/3e2c6b66780539437dc8a2fde99f46f4.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/75142c3c/0e89e70df50370114b47f9c30ef1882f.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/75142c3c/dd938d0bacf5705bb561788b9f82b3e8.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/75142c3c/6618d6f2af7ebc69e0362f3dd0f02301.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/75142c3c/dd4acd79ae07ac11fd4661f58e58a775.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/75142c3c/e458599800e5e2f09a9c9dc83ed675e5.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/75142c3c/f1ae224ac23a12a8fac9432001eaf7ae.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/75142c3c/3d6d54d295a684f78f867f12cf113b81.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/75142c3c/21e43ca097e1143213ca9d5075212129.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/75142c3c/59c71e52a95c8dff7bbe88ec1f5889f4.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/75142c3c/d5d2e79a473e066dadfcc2b1ff7daa73.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/75142c3c/79a489f60c525f66e7eaadbe0310c9c9.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/75142c3c/a25be91b00de4d44ec793f36a1cb9f48.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/75142c3c/1245812fbd0c765fb56391ebf4bdbe71.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/75142c3c/1cb9a351b1c2e751a8f6c1384372969e.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/75142c3c/effa2ed02e7acc0947b923b213652b62.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/75142c3c/c2ffa017383cc15db2e92efd889e340f.png">
+<meta property="article:published_time" content="2019-03-31T02:21:09.000Z">
+<meta property="article:modified_time" content="2020-02-13T12:17:10.000Z">
+<meta property="article:author" content="Chen Chong">
+<meta property="article:tag" content="微机原理与接口技术">
+<meta property="article:tag" content="寄存器">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://www.hhchenchong.com/2019/03/31/75142c3c/985a59b4d90fe07b24443f652c2487a9.png">
+
+<link rel="canonical" href="http://www.hhchenchong.com/2019/03/31/75142c3c.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+<script>
+    (function(){
+        if(''){
+            if (prompt('��������������') !== ''){
+                alert('�������');
+                history.back();
+            }
+        }
+    })();
+</script>
+  <title>微机原理与接口技术之寻址方式 | Saint Rainbow</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Saint Rainbow</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">世界很大，我却很小</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-fw fa-calendar"></i>日程表</a>
+
+  </li>
+        <li class="menu-item menu-item-软件">
+
+    <a href="/software/" rel="section"><i class="fa fa-fw fa-laptop"></i>软件</a>
+
+  </li>
+        <li class="menu-item menu-item-电子书">
+
+    <a href="/ebook/" rel="section"><i class="fa fa-fw fa-book"></i>电子书</a>
+
+  </li>
+        <li class="menu-item menu-item-相册">
+
+    <a href="/photo/" rel="section"><i class="fa fa-fw fa-camera"></i>相册</a>
+
+  </li>
+        <li class="menu-item menu-item-日记">
+
+    <a href="/diary/" rel="section"><i class="fa fa-fw fa-book"></i>日记</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/hhchenchong" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.hhchenchong.com/2019/03/31/75142c3c.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Chen Chong">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Saint Rainbow">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          微机原理与接口技术之寻址方式
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-03-31 10:21:09" itemprop="dateCreated datePublished" datetime="2019-03-31T10:21:09+08:00">2019-03-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-13 20:17:10" itemprop="dateModified" datetime="2020-02-13T20:17:10+08:00">2020-02-13</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BE%AE%E6%9C%BA%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8E%A5%E5%8F%A3%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index">
+                    <span itemprop="name">微机原理与接口技术</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2019/03/31/75142c3c.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2019/03/31/75142c3c.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <!--less-->
+<p>本文介绍8086和8088的寻址方式</p>
+<a id="more"></a>
+<h1 id="8086和8088的寻址方式"><a class="markdownIt-Anchor" href="#8086和8088的寻址方式"></a> 8086和8088的寻址方式</h1>
+<h2 id="一-寄存器寻址"><a class="markdownIt-Anchor" href="#一-寄存器寻址"></a> 一、寄存器寻址</h2>
+<p>操作速度快，唯一的指明的操作数在CPU内部的寄存器的寻址方式。在这种方式下，用户可以直接在指令中书写寄存器的名称</p>
+<p>例如如下的操作命令：</p>
+<p><img src="/2019/03/31/75142c3c/985a59b4d90fe07b24443f652c2487a9.png" alt></p>
+<p>下图为操作后寄存器的值</p>
+<p><img src="/2019/03/31/75142c3c/faa1ef2445ad507e7916713ecebf3ddc.png" alt></p>
+<h2 id="二-存储器寻址"><a class="markdownIt-Anchor" href="#二-存储器寻址"></a> 二、存储器寻址</h2>
+<h3 id="1立即寻址"><a class="markdownIt-Anchor" href="#1立即寻址"></a> 1.立即寻址</h3>
+<p>用户在指令中直接给出本次操作的常数（二进制、十进制和十六进制），该常数叫做立即数，它是本次操作的真正的操作数。<br>
+<img src="/2019/03/31/75142c3c/586e131653ba4d215a6ad075cc0aa59b.png" alt><br>
+图中09H就是立即数</p>
+<h3 id="2直接寻址"><a class="markdownIt-Anchor" href="#2直接寻址"></a> 2.直接寻址</h3>
+<p>在这种方式下，真正的操作数在内存中，而出现在指令中的是16位的偏移地址，用方括号括住，操作数默认在数据段中，其实际的物理地址是<br>
+物理地址=DS*16+16位的偏移地址<br>
+例如：<br>
+<img src="/2019/03/31/75142c3c/2c5e05a4fad101c3673ce8a35a999540.png" alt><br>
+这里START开始的一段代码初始化DS，将数据段DATA送入DS，后边箭头所指的是将数据段0000位置上的数据送到AX，DS的逻辑段基地址为0710：<br>
+内存中如下图所示：<br>
+<img src="/2019/03/31/75142c3c/c08cf3d5868a85362a400898ce6834ec.png" alt><br>
+运行完指令后，寄存器的值如下图所示：<br>
+<img src="/2019/03/31/75142c3c/5fb422d23d7d8326363c436032158b34.png" alt><br>
+8086系统中，也允许用户使用段超越前缀来指明此时使用的段寄存器，例如<br>
+<img src="/2019/03/31/75142c3c/3e2c6b66780539437dc8a2fde99f46f4.png" alt><br>
+这样内存中的附加段数据如下图所示<br>
+<img src="/2019/03/31/75142c3c/0e89e70df50370114b47f9c30ef1882f.png" alt><br>
+运行之后的寄存器中的数据如下图所示<br>
+<img src="/2019/03/31/75142c3c/dd938d0bacf5705bb561788b9f82b3e8.png" alt></p>
+<h3 id="3寄存器间接寻址"><a class="markdownIt-Anchor" href="#3寄存器间接寻址"></a> 3.寄存器间接寻址</h3>
+<p>在这种寻址方式下，偏移地址不是直接出现在指令中，而是出现在指定的寄存器里（DI，SI，BX，BP<br>
+1).  如果以SI，DI，BX为寄存器间接寻址，，默认操作数在数据段中</p>
+<pre><code>实际的物理地址为：
+物理地址=DS\*16+SI，DI，BX中给的16位偏移地址
+例如以下代码：
+</code></pre>
+<p><img src="/2019/03/31/75142c3c/6618d6f2af7ebc69e0362f3dd0f02301.png" alt></p>
+<p>寄存器的值如下图所示：</p>
+<p><img src="/2019/03/31/75142c3c/dd4acd79ae07ac11fd4661f58e58a775.png" alt><br>
+可见，其中SI使得寄存器间接寻址指向数据段的偏移地址。<br>
+2).  如果以BP为寄存器间接寻址，那么，操作数默认在堆栈中</p>
+<pre><code>实际的物理地址为：
+物理地址=SS\*16+BP中给出的16位偏移地址
+我们将上面的SI改为BP,并添加堆栈段
+</code></pre>
+<p><img src="/2019/03/31/75142c3c/e458599800e5e2f09a9c9dc83ed675e5.png" alt><br>
+寄存器的值如下图所示：<br>
+<img src="/2019/03/31/75142c3c/f1ae224ac23a12a8fac9432001eaf7ae.png" alt><br>
+可见使用BP寄存器间接寻址的方式的段寄地址是SS同样的，允许在指令中使用段超越符，这是按照指定的段寄存器于指令中的寄存器相加，形成操作数地址。<br>
+例如：<br>
+<img src="/2019/03/31/75142c3c/3d6d54d295a684f78f867f12cf113b81.png" alt></p>
+<h3 id="4变址寻址"><a class="markdownIt-Anchor" href="#4变址寻址"></a> 4.变址寻址</h3>
+<p>在这种寻址方式下，真正的操作数也是在内存中，操作数的十六位偏移地址也不直接出现在指令中，而是在指令中由方括号括起来的变址寄存器+所所给出的8位或16位的偏移量确定<br>
+同样的，变址寻址也有两种类型<br>
+1).  以DS位基址的变址寻址<br>
+用DI，SI，BX为寄存器<br>
+实际的物理地址为<br>
+物理地址=DS*16+DI，SI，BX中给定的内容+偏移量<br>
+例如：<br>
+<img src="/2019/03/31/75142c3c/21e43ca097e1143213ca9d5075212129.png" alt><br>
+寄存器的值如下图所示：<br>
+<img src="/2019/03/31/75142c3c/59c71e52a95c8dff7bbe88ec1f5889f4.png" alt><br>
+2).  以SS为基址的变址寻址<br>
+用BP为寄存器<br>
+实际的物理地址为<br>
+物理地址=SS*16+BP中给定的内容+偏移量<br>
+例如：<br>
+<img src="/2019/03/31/75142c3c/d5d2e79a473e066dadfcc2b1ff7daa73.png" alt><br>
+寄存器中的值如下图所示：<br>
+<img src="/2019/03/31/75142c3c/79a489f60c525f66e7eaadbe0310c9c9.png" alt><br>
+同时也与徐使用段超越。这时按照指定的段寄存器和指令中的寄存器内容和偏移量相加，形成操作数地址<br>
+例如：<br>
+<img src="/2019/03/31/75142c3c/a25be91b00de4d44ec793f36a1cb9f48.png" alt></p>
+<h3 id="5基址加变址寻址"><a class="markdownIt-Anchor" href="#5基址加变址寻址"></a> 5.基址加变址寻址</h3>
+<p>把前面所述的寄存器间接寻址和变址寻址相结合的寻址方式称为基址加变址寻址的寻址方式；在这种寻址方式下，真正的操作数在内存中，这时，通常将BX和BP看作基址寄存器，而把SI和DI看作变址寄存器；<br>
+同样的基址加变址也有两种情况：<br>
+1).  以BX为基址寄存器，默认的操作数在DS中<br>
+实际的物理地址：<br>
+物理地址=DS*16+BX+DI/SI+给定的偏移量<br>
+例如：<br>
+<img src="/2019/03/31/75142c3c/1245812fbd0c765fb56391ebf4bdbe71.png" alt><br>
+寄存器中的内容如下图所示：<br>
+<img src="/2019/03/31/75142c3c/1cb9a351b1c2e751a8f6c1384372969e.png" alt><br>
+2).  以BP为基址寄存器，默认的操作数在SS中<br>
+实际的物理地址：<br>
+物理地址=SS*16+BP+SI/DI+给定的偏移量<br>
+我们将BX改为BP<br>
+<img src="/2019/03/31/75142c3c/effa2ed02e7acc0947b923b213652b62.png" alt><br>
+寄存器中的内容如下图所示：<br>
+<img src="/2019/03/31/75142c3c/c2ffa017383cc15db2e92efd889e340f.png" alt><br>
+可以看出，默认是在堆栈段<br>
+同样的，基址加变址的寻址方式也支持使用段超越</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\03\31\91de029c.html" rel="bookmark">微机原理及接口技术之数据传送指令</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\04\17\d7d54c39.html" rel="bookmark">微机原理与接口技术之字符串操作</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\04\06\3729b804.html" rel="bookmark">微机原理与接口技术之原码反码和补码</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\04\19\71081ab0.html" rel="bookmark">微机原理与接口技术之标志处理和CPU控制类指令</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\04\10\24b395cd.html" rel="bookmark">微机原理与接口技术之汇编IDE的搭建</a></div>
+    </li>
+  </ul>
+
+        <div class="reward-container">
+  <div>喜欢就支持我吧!</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="Chen Chong 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.png" alt="Chen Chong 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E5%BE%AE%E6%9C%BA%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8E%A5%E5%8F%A3%E6%8A%80%E6%9C%AF/" rel="tag"><i class="fa fa-tag"></i> 微机原理与接口技术</a>
+              <a href="/tags/%E5%AF%84%E5%AD%98%E5%99%A8/" rel="tag"><i class="fa fa-tag"></i> 寄存器</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/02/19/ee509c29.html" rel="prev" title="Hexo主题Next配置中的常见问题解答">
+      <i class="fa fa-chevron-left"></i> Hexo主题Next配置中的常见问题解答
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/03/31/91de029c.html" rel="next" title="微机原理及接口技术之数据传送指令">
+      微机原理及接口技术之数据传送指令 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#8086和8088的寻址方式"><span class="nav-text"> 8086和8088的寻址方式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-寄存器寻址"><span class="nav-text"> 一、寄存器寻址</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-存储器寻址"><span class="nav-text"> 二、存储器寻址</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1立即寻址"><span class="nav-text"> 1.立即寻址</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2直接寻址"><span class="nav-text"> 2.直接寻址</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3寄存器间接寻址"><span class="nav-text"> 3.寄存器间接寻址</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4变址寻址"><span class="nav-text"> 4.变址寻址</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5基址加变址寻址"><span class="nav-text"> 5.基址加变址寻址</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chen Chong"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Chen Chong</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/hhchenchong" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;hhchenchong" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/hhchenchong@163.com" title="E-Mail → hhchenchong@163.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+     <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=448184048&auto=0&height=66"></iframe>
+
+今日诗词：<br>
+<span id="jinrishici-sentence">正在加载今日诗词....</span><br>
+
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+<img src="https://api.xygeng.cn/bing/1920.php" alt="Bing每日图片超高清" />
+
+<!-- hhchenchong -->
+今日天气：<br>
+<div id="weather-view-he"></div>
+<script>
+WIDGET = {ID: 'ESvcuq32Fw'};
+</script>
+<script type="text/javascript" src="https://apip.weatherdt.com/view/static/js/r.js?v=1111"></script>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="noopener" target="_blank">鲁ICP备20004309号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chen Chong</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el: '#valine-comments',
+      verify: false,
+      notify: true,
+      appId: 'L2EBDsymQXKYwJWyF8ACJ4de-gzGzoHsz',
+      appKey: '4hFeY20jBK2eAtpoNv91VDsn',
+      placeholder: "欢迎评论",
+      avatar: 'mm',
+      meta: guest,
+      pageSize: '10' || 10,
+      visitor: false,
+      lang: '' || 'zh-cn',
+      path: location.pathname,
+      recordIP: false,
+      serverURLs: ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

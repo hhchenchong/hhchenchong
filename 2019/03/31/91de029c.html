@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('http://www.hhchenchong.com').hostname,
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.7.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":"ture","style":"mac"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: true,
+    lazyload: false,
+    pangu: true,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="本文介绍8086和8088的数据传送指令">
+<meta property="og:type" content="article">
+<meta property="og:title" content="微机原理及接口技术之数据传送指令">
+<meta property="og:url" content="http://www.hhchenchong.com/2019/03/31/91de029c.html">
+<meta property="og:site_name" content="Saint Rainbow">
+<meta property="og:description" content="本文介绍8086和8088的数据传送指令">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/91de029c/13f1688935f8e959fe19a9fac2a1cd9.jpg">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/91de029c/1554029818719.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/91de029c/1554029976791.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/91de029c/1554030119810.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/91de029c/%E5%BE%AE%E6%9C%BA%E5%8E%9F%E7%90%86%E5%8F%8A%E6%8E%A5%E5%8F%A3%E6%8A%80%E6%9C%AF%E4%B9%8B%E6%95%B0%E6%8D%AE%E4%BC%A0%E9%80%81%E6%8C%87%E4%BB%A4%5C1554030240959.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/91de029c/%E5%BE%AE%E6%9C%BA%E5%8E%9F%E7%90%86%E5%8F%8A%E6%8E%A5%E5%8F%A3%E6%8A%80%E6%9C%AF%E4%B9%8B%E6%95%B0%E6%8D%AE%E4%BC%A0%E9%80%81%E6%8C%87%E4%BB%A4%5C1554030281788.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/91de029c/1554030405026.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/91de029c/1554030812436.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/91de029c/1554031054671.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/91de029c/1554031146829.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/91de029c/1554115381209.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/91de029c/1554118598263.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/91de029c/1554118764804.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/91de029c/1554202290798.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/91de029c/1554202367663.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/91de029c/1554202420188.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/91de029c/1554203410898.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/91de029c/1554203604621.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/91de029c/1554203714344.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/91de029c/1554203732771.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/03/31/91de029c/1554204100753.png">
+<meta property="article:published_time" content="2019-03-31T04:52:32.000Z">
+<meta property="article:modified_time" content="2020-02-13T12:17:31.000Z">
+<meta property="article:author" content="Chen Chong">
+<meta property="article:tag" content="微机原理与接口技术">
+<meta property="article:tag" content="寄存器">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://www.hhchenchong.com/2019/03/31/91de029c/13f1688935f8e959fe19a9fac2a1cd9.jpg">
+
+<link rel="canonical" href="http://www.hhchenchong.com/2019/03/31/91de029c.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+<script>
+    (function(){
+        if(''){
+            if (prompt('��������������') !== ''){
+                alert('�������');
+                history.back();
+            }
+        }
+    })();
+</script>
+  <title>微机原理及接口技术之数据传送指令 | Saint Rainbow</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Saint Rainbow</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">世界很大，我却很小</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-fw fa-calendar"></i>日程表</a>
+
+  </li>
+        <li class="menu-item menu-item-软件">
+
+    <a href="/software/" rel="section"><i class="fa fa-fw fa-laptop"></i>软件</a>
+
+  </li>
+        <li class="menu-item menu-item-电子书">
+
+    <a href="/ebook/" rel="section"><i class="fa fa-fw fa-book"></i>电子书</a>
+
+  </li>
+        <li class="menu-item menu-item-相册">
+
+    <a href="/photo/" rel="section"><i class="fa fa-fw fa-camera"></i>相册</a>
+
+  </li>
+        <li class="menu-item menu-item-日记">
+
+    <a href="/diary/" rel="section"><i class="fa fa-fw fa-book"></i>日记</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/hhchenchong" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.hhchenchong.com/2019/03/31/91de029c.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Chen Chong">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Saint Rainbow">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          微机原理及接口技术之数据传送指令
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-03-31 12:52:32" itemprop="dateCreated datePublished" datetime="2019-03-31T12:52:32+08:00">2019-03-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-13 20:17:31" itemprop="dateModified" datetime="2020-02-13T20:17:31+08:00">2020-02-13</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BE%AE%E6%9C%BA%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8E%A5%E5%8F%A3%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index">
+                    <span itemprop="name">微机原理与接口技术</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2019/03/31/91de029c.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2019/03/31/91de029c.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <!--less-->
+<p>本文介绍8086和8088的数据传送指令</p>
+<a id="more"></a>
+<h1 id="数据传送指令"><a class="markdownIt-Anchor" href="#数据传送指令"></a> 数据传送指令</h1>
+<h2 id="1数据传送指令"><a class="markdownIt-Anchor" href="#1数据传送指令"></a> 1.数据传送指令</h2>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MOV OPRD1，OPRD2</span><br></pre></td></tr></table></figure>
+<p>功能：OPRD1←OPRD2</p>
+<table>
+<thead>
+<tr>
+<th>操作数</th>
+<th>可供选择的对象</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>源操作数（OPRD2）</td>
+<td>累加器、寄存器、存储器、立即数</td>
+</tr>
+<tr>
+<td>目的操作数（OPRD1）</td>
+<td>累加器、寄存器、存储器</td>
+</tr>
+</tbody>
+</table>
+<p><img src="/2019/03/31/91de029c/13f1688935f8e959fe19a9fac2a1cd9.jpg" alt="13f1688935f8e959fe19a9fac2a1cd9"></p>
+<p>1）CPU内部寄存器（采用寄存器寻址）之间数据的任意传送（除了代码段寄存器和指令指针IP除外）</p>
+<p>例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MOV AL,BL</span><br><span class="line">MOV DL,CH</span><br><span class="line">MOV SI,DI</span><br><span class="line">MOV DS,AX</span><br></pre></td></tr></table></figure>
+<p>注意：CPU内部寄存器之间传送指令的位数必须一致，即只能由8位和8位之间相互传递，16位和16位之间传递，<strong>例如以下代码是错误的</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MOV DL，BX ×</span><br></pre></td></tr></table></figure>
+<p>2）立即数（采用立即寻址）传送至CPU内部的通用寄存器（AX,BX,CX,DX,BP,SP,SI,DI),给这些寄存器赋初值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MOV AL,4；字节传递</span><br><span class="line">MOV AX,03FFH; 字传递</span><br><span class="line">MOV AL,057BH;错误，类型不符</span><br></pre></td></tr></table></figure>
+<p>3）CPU的内部寄存器（除CS和IP）与存储器（直接寻址、寄存器间接寻址、变址寻址、基址加变址寻址）之间传送数据，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MOV AX,BUFFER	;直接寻址的方式</span><br><span class="line">MOV AX,[SI]		;源操作数间接寻址</span><br><span class="line">MOV	[DI],CX		;目的操作数间接寻址</span><br><span class="line">MOV	DS,[SI+BX]	;源操作数基址加变址寻址</span><br></pre></td></tr></table></figure>
+<p>4）立即数传送给存储单元</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MOV [200H],BYTE PTR 25H</span><br><span class="line">MOV WORD PTR [SI],35H</span><br></pre></td></tr></table></figure>
+<p>NOTES:</p>
+<p>①寄存器与存储器之间传送指令和寄存器之间传送时，不能对CS和IP进行操作</p>
+<p>②两个存储器之间不能直接进行数据传送，即两个操作数必须有一个寄存器寻址</p>
+<p>如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MOV AH,[SI]</span><br><span class="line">MOV SUM,AH;把数据段以SI为偏移地址的值传送到SUM所处的存储单元</span><br></pre></td></tr></table></figure>
+<p>③两个段寄存器直接也不能直接传送数据，也不允许用立即寻址的方式对段寄存器赋值，需要进行这种操作时，可以借助寄存器完成：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MOV AX，0</span><br><span class="line">MOV DS，AX；把立即数0送到DS中</span><br></pre></td></tr></table></figure>
+<p>④目的操作数不能采用立即寻址</p>
+<h2 id="2堆栈指令"><a class="markdownIt-Anchor" href="#2堆栈指令"></a> 2.堆栈指令</h2>
+<p>堆栈是一块特殊的存储区域，因为只有一个存取口，所以堆栈的数据操作是先进后出的形式，区别于指令队列，先进入指令队列的数据最先执行，存取口的段地址由段寄存器SS指示，偏移地址则由堆栈指针SP确定，如果段寄存器SS的值不变的话，只要找堆栈指针SP的值指示的位置及进行操作即可，每次操作完，CPU会自动修改SP的值，使其总是保持栈顶的位置（即堆栈的存取口）（高地址），为下次操作做准备。</p>
+<p>对于堆栈的操作只有两种，即进栈和弹栈，栈操作的操作数必须时16位</p>
+<p>操作数可以是通用寄存器（CS除外），内存操作数（立即取值除外）</p>
+<h3 id="1入栈"><a class="markdownIt-Anchor" href="#1入栈"></a> 1）入栈</h3>
+<p>格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PUSH OPRD</span><br></pre></td></tr></table></figure>
+<p>功能：将OPRD操作数压入栈中</p>
+<p>执行的步骤为：</p>
+<p>SP=SP-1→ [SP] = 操作数的高八位→ SP = SP-1→[SP]=操作数的低八位</p>
+<p>例如：</p>
+<p><img src="/2019/03/31/91de029c/1554029818719.png" alt="1554029818719"></p>
+<p>程序运行到这步时，将0102H压入栈中</p>
+<p>寄存器中的值如图所示：</p>
+<p><img src="/2019/03/31/91de029c/1554029976791.png" alt="1554029989791"></p>
+<p>内存中的数据如图所示：</p>
+<p><img src="/2019/03/31/91de029c/1554030119810.png" alt="1554030119810"></p>
+<p>继续往下执行：</p>
+<p><img src="/2019/03/31/91de029c/%E5%BE%AE%E6%9C%BA%E5%8E%9F%E7%90%86%E5%8F%8A%E6%8E%A5%E5%8F%A3%E6%8A%80%E6%9C%AF%E4%B9%8B%E6%95%B0%E6%8D%AE%E4%BC%A0%E9%80%81%E6%8C%87%E4%BB%A4%5C1554030240959.png" alt="1554030240959"></p>
+<p>再次压栈，将0304H压入到栈中</p>
+<p><img src="/2019/03/31/91de029c/%E5%BE%AE%E6%9C%BA%E5%8E%9F%E7%90%86%E5%8F%8A%E6%8E%A5%E5%8F%A3%E6%8A%80%E6%9C%AF%E4%B9%8B%E6%95%B0%E6%8D%AE%E4%BC%A0%E9%80%81%E6%8C%87%E4%BB%A4%5C1554030281788.png" alt="1554030281788"></p>
+<p>此时堆栈指针SP变为1，减了2</p>
+<p>内存中的值变为：</p>
+<p><img src="/2019/03/31/91de029c/1554030405026.png" alt="1554030405026"></p>
+<p>将0304H压到了栈中</p>
+<h3 id="2弹栈指令"><a class="markdownIt-Anchor" href="#2弹栈指令"></a> 2）弹栈指令</h3>
+<p>格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">POP OPRD</span><br></pre></td></tr></table></figure>
+<p>功能：将栈顶的值弹出到OPRD</p>
+<p>操作过程：操作数的低八位=[SP]→SP=SP+1→操作数的高八位=[SP]→SP=SP+1</p>
+<p>例如：</p>
+<p><img src="/2019/03/31/91de029c/1554030812436.png" alt="1554030812436"></p>
+<p>运行到此步时：</p>
+<p>寄存器AX的值为：0304H，PUSH AX结束SP为1,之后寄存器的值为3</p>
+<p><img src="/2019/03/31/91de029c/1554031054671.png" alt="1554031054671"></p>
+<p>在进行一次弹栈指令AX变为0102H，SP变为5</p>
+<p><img src="/2019/03/31/91de029c/1554031146829.png" alt="1554031146829"></p>
+<h2 id="3交换指令"><a class="markdownIt-Anchor" href="#3交换指令"></a> 3.交换指令</h2>
+<p>一般格式：XCHG OPRD1OPRD2</p>
+<p>功能：OPRD1和OPRD2进行交换</p>
+<p>说明：这时一条交换指令，把一个字节或者一个字的源操作数和目的操作数相交换。交换发生在：寄存器和累加器之间，通用寄存器之间，通用寄存器和存储器之间进行，但段寄存器不能作为一个操作数</p>
+<p>例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">XCHG BX,AX</span><br></pre></td></tr></table></figure>
+<p>运行完成后为：</p>
+<p><img src="/2019/03/31/91de029c/1554115381209.png" alt="1554115381209"></p>
+<p>可以看出来，AX和BX交换了数据</p>
+<h2 id="4累加器专用传送指令"><a class="markdownIt-Anchor" href="#4累加器专用传送指令"></a> 4.累加器专用传送指令</h2>
+<p>与累加器AX（AL）相关的专用指令一共有三种：输出、输入和查表指令。前两种又称为输入输出指令。</p>
+<h3 id="1in输入指令"><a class="markdownIt-Anchor" href="#1in输入指令"></a> 1）IN输入指令</h3>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">IN AL,n 	功能：输入字节</span><br><span class="line">IN AL,N 	功能：输入字</span><br><span class="line">IN AL,DX	功能：输入字节DX→AL</span><br><span class="line">IN AX,DX	功能：输入字  DX→AX</span><br></pre></td></tr></table></figure>
+<p>说明：</p>
+<p>①n：端口号</p>
+<p>②输入指令实现从输入端口输入一个字或者一个字节。若输入一个字节，则输入数据到AL，若输入一个字，则输入到AX，若端口的地址小于255，则可以将端口号直接写在指令中，例如n，若端口的地址端口号大于255，则必须使用DX保存端口地址，这时最多寻找64k个端口。</p>
+<p>③注意，在进行字输入时，需要对连续的两个相邻的端口操作，这就对接口的硬件设计提出了较高的要求，即要保证两个连续的端口指向同一设备。</p>
+<p>例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">IN AL,0F0H;从端口0F0H端口输入一个字节到AL</span><br><span class="line">IN AX，12H；从12H、13H连续的端口输入一个字到AX</span><br></pre></td></tr></table></figure>
+<p>但以下的命令时错误的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">IN AX,0FFFFH;端口号超过了255</span><br></pre></td></tr></table></figure>
+<p>应该改为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MOV DX,0FFFFH</span><br><span class="line">IN  AX,[DX]</span><br></pre></td></tr></table></figure>
+<h3 id="2out指令"><a class="markdownIt-Anchor" href="#2out指令"></a> 2)OUT指令</h3>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">OUT n,AL; 输出字节</span><br><span class="line">OUT n,AX; 输出字 AX→[n+1][n]</span><br><span class="line">OUT DX,AL;输出字节</span><br><span class="line">OUT DX,AX;输出字</span><br></pre></td></tr></table></figure>
+<p>说明：</p>
+<p>实现将AL字节或者AX字的内容传送到输出端口。其他和IN指令相同</p>
+<h3 id="3xlat查表命令"><a class="markdownIt-Anchor" href="#3xlat查表命令"></a> 3）XLAT查表命令</h3>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">XLAT或XTAL TABLE</span><br></pre></td></tr></table></figure>
+<p>功能：完成一个字节的查表转换</p>
+<p>要求：表的基地址即表头的偏移地址放在BX中，默认查表在数据段，表的长度为256字节，寄存器AL中的内容作为要查元素距离表头的偏移量，将查出来的结果放到AL中。</p>
+<p>我们来编写一个小程序用来查找0~9的平方数</p>
+<p><img src="/2019/03/31/91de029c/1554118598263.png" alt="1554118598263"></p>
+<p>说明：我们看出，数据段定义了0-9的平方数，表头的偏移地址为0，BX = 0，要查4的平方数 AL =4</p>
+<p>实现结果如下：</p>
+<p><img src="/2019/03/31/91de029c/1554118764804.png" alt="1554118764804"></p>
+<p>结果AL中的值为10H = 16 是4的平方数</p>
+<h2 id="5地址传送指令"><a class="markdownIt-Anchor" href="#5地址传送指令"></a> 5.地址传送指令</h2>
+<p>8086和8088总共有三条地址传送指令</p>
+<p>1）LEA</p>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LEA OPRD1，OPRD2</span><br></pre></td></tr></table></figure>
+<p>功能：把源操作数OPRD2的地址偏移量传送到目的操作数OPRD1中</p>
+<p>要求：源操作数必须是一个存储器操作数，目的操作数必须是一个16位的通用寄存器或者是变址寄存器</p>
+<p>例如：内存DS的开始有两个变量</p>
+<p><img src="/2019/03/31/91de029c/1554202290798.png" alt="1554202290798"></p>
+<p>如果要将A2（11H）的地址送到BX中，可以运行以下命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LEA BX，A2</span><br></pre></td></tr></table></figure>
+<p><img src="/2019/03/31/91de029c/1554202367663.png" alt="1554202367663"></p>
+<p>运行完后BX的内容为：</p>
+<p><img src="/2019/03/31/91de029c/1554202420188.png" alt="1554202420188"></p>
+<h3 id="2lds"><a class="markdownIt-Anchor" href="#2lds"></a> 2)LDS</h3>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LDS OPRD2，OPRD1</span><br></pre></td></tr></table></figure>
+<p>功能：完成一个地址指针的传送。OPRD1的内容是一个地址，地址包括段地址和偏移地址两部分构成，共4个字节。高字是DS的内容，低字送到OPRD2</p>
+<p>例如：</p>
+<p><img src="/2019/03/31/91de029c/1554203410898.png" alt="1554203410898"></p>
+<p>LDS指令将A3所指向的4个字节的内容当作一个连续的空间，高字的内容送到DS，低字的内容送到</p>
+<p>AX，如图所示</p>
+<p><img src="/2019/03/31/91de029c/1554203604621.png" alt="1554203604621"></p>
+<h3 id="3les"><a class="markdownIt-Anchor" href="#3les"></a> 3）LES</h3>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LES OPRD1，OPRD2</span><br></pre></td></tr></table></figure>
+<p>和LDS类似，不过是高字送到ES。</p>
+<p>如：</p>
+<p><img src="/2019/03/31/91de029c/1554203714344.png" alt="1554203714344"></p>
+<p>ES发生变化：</p>
+<p><img src="/2019/03/31/91de029c/1554203732771.png" alt="1554203732771"></p>
+<h2 id="6标志寄存器传送"><a class="markdownIt-Anchor" href="#6标志寄存器传送"></a> 6.标志寄存器传送</h2>
+<p>8086共有4条标志传送指令</p>
+<h3 id="1lahf"><a class="markdownIt-Anchor" href="#1lahf"></a> 1）LAHF</h3>
+<p>格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LAHF</span><br></pre></td></tr></table></figure>
+<p>功能：该指令将标志寄存器的SF、ZF、AF、PF、CF传送到AH寄存器的对应位中，空位没有定义，该指令不影响标志位。</p>
+<p>以下是8086的标志位：</p>
+<p><img src="/2019/03/31/91de029c/1554204100753.png" alt="1554204100753"></p>
+<h3 id="2sahf"><a class="markdownIt-Anchor" href="#2sahf"></a> 2）SAHF</h3>
+<p>格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SAHF</span><br></pre></td></tr></table></figure>
+<p>该指令和LAHF正好相反，它将寄存器AH中的内容送至标志寄存器SF、ZF、AF、PF、CF位。影响标志位，但不影响OF、DF、IF</p>
+<h3 id="3pushf"><a class="markdownIt-Anchor" href="#3pushf"></a> 3）PUSHF</h3>
+<p>格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PUSHF</span><br></pre></td></tr></table></figure>
+<p>该指令将标志寄存器的值压入栈顶，16位，同时修改堆栈指针，不影响标志位</p>
+<h3 id="4popf"><a class="markdownIt-Anchor" href="#4popf"></a> 4）POPF</h3>
+<p>格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">POPF</span><br></pre></td></tr></table></figure>
+<p>该指针将堆栈顶部的一个字传送到标志寄存器，同时修改堆栈指针，影响标志位。</p>
+<p><em>最后更新：2019年4月2日</em></p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\03\31\75142c3c.html" rel="bookmark">微机原理与接口技术之寻址方式</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\04\17\d7d54c39.html" rel="bookmark">微机原理与接口技术之字符串操作</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\04\06\3729b804.html" rel="bookmark">微机原理与接口技术之原码反码和补码</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\04\19\71081ab0.html" rel="bookmark">微机原理与接口技术之标志处理和CPU控制类指令</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\04\10\24b395cd.html" rel="bookmark">微机原理与接口技术之汇编IDE的搭建</a></div>
+    </li>
+  </ul>
+
+        <div class="reward-container">
+  <div>喜欢就支持我吧!</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="Chen Chong 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.png" alt="Chen Chong 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E5%BE%AE%E6%9C%BA%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8E%A5%E5%8F%A3%E6%8A%80%E6%9C%AF/" rel="tag"><i class="fa fa-tag"></i> 微机原理与接口技术</a>
+              <a href="/tags/%E5%AF%84%E5%AD%98%E5%99%A8/" rel="tag"><i class="fa fa-tag"></i> 寄存器</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/03/31/75142c3c.html" rel="prev" title="微机原理与接口技术之寻址方式">
+      <i class="fa fa-chevron-left"></i> 微机原理与接口技术之寻址方式
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/04/03/b40dc517.html" rel="next" title="Hexo主题自定义">
+      Hexo主题自定义 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#数据传送指令"><span class="nav-text"> 数据传送指令</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1数据传送指令"><span class="nav-text"> 1.数据传送指令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2堆栈指令"><span class="nav-text"> 2.堆栈指令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1入栈"><span class="nav-text"> 1）入栈</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2弹栈指令"><span class="nav-text"> 2）弹栈指令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3交换指令"><span class="nav-text"> 3.交换指令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4累加器专用传送指令"><span class="nav-text"> 4.累加器专用传送指令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1in输入指令"><span class="nav-text"> 1）IN输入指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2out指令"><span class="nav-text"> 2)OUT指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3xlat查表命令"><span class="nav-text"> 3）XLAT查表命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5地址传送指令"><span class="nav-text"> 5.地址传送指令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2lds"><span class="nav-text"> 2)LDS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3les"><span class="nav-text"> 3）LES</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6标志寄存器传送"><span class="nav-text"> 6.标志寄存器传送</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1lahf"><span class="nav-text"> 1）LAHF</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2sahf"><span class="nav-text"> 2）SAHF</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3pushf"><span class="nav-text"> 3）PUSHF</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4popf"><span class="nav-text"> 4）POPF</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chen Chong"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Chen Chong</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/hhchenchong" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;hhchenchong" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/hhchenchong@163.com" title="E-Mail → hhchenchong@163.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+     <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=448184048&auto=0&height=66"></iframe>
+
+今日诗词：<br>
+<span id="jinrishici-sentence">正在加载今日诗词....</span><br>
+
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+<img src="https://api.xygeng.cn/bing/1920.php" alt="Bing每日图片超高清" />
+
+<!-- hhchenchong -->
+今日天气：<br>
+<div id="weather-view-he"></div>
+<script>
+WIDGET = {ID: 'ESvcuq32Fw'};
+</script>
+<script type="text/javascript" src="https://apip.weatherdt.com/view/static/js/r.js?v=1111"></script>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="noopener" target="_blank">鲁ICP备20004309号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chen Chong</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el: '#valine-comments',
+      verify: false,
+      notify: true,
+      appId: 'L2EBDsymQXKYwJWyF8ACJ4de-gzGzoHsz',
+      appKey: '4hFeY20jBK2eAtpoNv91VDsn',
+      placeholder: "欢迎评论",
+      avatar: 'mm',
+      meta: guest,
+      pageSize: '10' || 10,
+      visitor: false,
+      lang: '' || 'zh-cn',
+      path: location.pathname,
+      recordIP: false,
+      serverURLs: ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

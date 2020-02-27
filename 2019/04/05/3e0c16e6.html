@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('http://www.hhchenchong.com').hostname,
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.7.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":"ture","style":"mac"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: true,
+    lazyload: false,
+    pangu: true,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="本文介绍算术运算指令">
+<meta property="og:type" content="article">
+<meta property="og:title" content="微机原理与接口技术之算术运算指令">
+<meta property="og:url" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6.html">
+<meta property="og:site_name" content="Saint Rainbow">
+<meta property="og:description" content="本文介绍算术运算指令">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554461621075.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554462029726.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554462054415.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554463157181.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554463229750.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554463316702.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554463289270.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554463345872.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554550023512.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554550103970.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554550126370.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554808065866.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554808097850.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554808152963.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554810055692.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554810079553.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554884367973.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554884405398.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554884613105.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554884632766.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554884770068.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554884799532.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554884843222.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554885416013.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554885449036.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554894261959.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554894297635.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554980147353.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554981296956.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554981329461.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554980472973.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554981465525.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554981502400.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554980625497.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554981555309.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554981572616.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554981594663.png">
+<meta property="og:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554982066435.png">
+<meta property="article:published_time" content="2019-04-05T10:27:55.000Z">
+<meta property="article:modified_time" content="2020-02-13T12:23:40.000Z">
+<meta property="article:author" content="Chen Chong">
+<meta property="article:tag" content="微机原理与接口技术">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://www.hhchenchong.com/2019/04/05/3e0c16e6/1554461621075.png">
+
+<link rel="canonical" href="http://www.hhchenchong.com/2019/04/05/3e0c16e6.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+<script>
+    (function(){
+        if(''){
+            if (prompt('��������������') !== ''){
+                alert('�������');
+                history.back();
+            }
+        }
+    })();
+</script>
+  <title>微机原理与接口技术之算术运算指令 | Saint Rainbow</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="\assets\css\APlayer.min.css" class="aplayer-style-marker">
+<script src="\assets\js\APlayer.min.js" class="aplayer-script-marker"></script>
+<script src="\assets\js\Meting.min.js" class="meting-script-marker"></script>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Saint Rainbow</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">世界很大，我却很小</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-fw fa-calendar"></i>日程表</a>
+
+  </li>
+        <li class="menu-item menu-item-软件">
+
+    <a href="/software/" rel="section"><i class="fa fa-fw fa-laptop"></i>软件</a>
+
+  </li>
+        <li class="menu-item menu-item-电子书">
+
+    <a href="/ebook/" rel="section"><i class="fa fa-fw fa-book"></i>电子书</a>
+
+  </li>
+        <li class="menu-item menu-item-相册">
+
+    <a href="/photo/" rel="section"><i class="fa fa-fw fa-camera"></i>相册</a>
+
+  </li>
+        <li class="menu-item menu-item-日记">
+
+    <a href="/diary/" rel="section"><i class="fa fa-fw fa-book"></i>日记</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/hhchenchong" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.hhchenchong.com/2019/04/05/3e0c16e6.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Chen Chong">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Saint Rainbow">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          微机原理与接口技术之算术运算指令
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-04-05 18:27:55" itemprop="dateCreated datePublished" datetime="2019-04-05T18:27:55+08:00">2019-04-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-13 20:23:40" itemprop="dateModified" datetime="2020-02-13T20:23:40+08:00">2020-02-13</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BE%AE%E6%9C%BA%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8E%A5%E5%8F%A3%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index">
+                    <span itemprop="name">微机原理与接口技术</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2019/04/05/3e0c16e6.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2019/04/05/3e0c16e6.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <!--less-->
+<p>本文介绍算术运算指令</p>
+<a id="more"></a>
+
+    <div id="aplayer-ZvKWRPTp" class="aplayer aplayer-tag-marker meting-tag-marker" data-id="1356350562" data-server="netease" data-type="song" data-mode="circulation" data-autoplay="true" data-mutex="true" data-listmaxheight="340px" data-preload="auto" data-theme="#FF4081"></div>
+<p>今日份的Music</p>
+<p>这一生关于你的风景</p>
+<p><em>让我来再来轻轻对你唱</em></p>
+<p><em>我多想能多陪你一场</em></p>
+<p><em>把前半生的风景对你讲</em></p>
+<h2 id="算数运算指令"><a class="markdownIt-Anchor" href="#算数运算指令"></a> 算数运算指令</h2>
+<p>8086/8088指令系统进行无符号运算时用补码表示，同时提供十进制校正指令，可以对BCD码表示的十进制数进行算数运算。</p>
+<p>BCD小知识：</p>
+<p>BCD码（Binary-Coded Decimal‎）亦称二进码十进数或二-十进制代码。用4位二进制数来表示1位十进制数中的0~9这10个数码。是一种二进制的数字编码形式，用二进制编码的十进制代码。BCD码这种编码形式利用了四个位元来储存一个十进制的数码，使二进制和十进制之间的转换得以快捷的进行。这种编码技巧最常用于会计系统的设计里，因为会计制度经常需要对很长的数字串作准确的计算。相对于一般的浮点式记数法，采用BCD码，既可保存数值的精确度，又可免去使电脑作浮点运算时所耗费的时间。此外，对于其他需要高精确度的计算，BCD编码亦很常用。<br>
+8421 BCD码是最基本和最常用的BCD码，它和四位自然二进制码相似，各位的权值为8、4、2、1，故称为有权BCD码。和四位自然二进制码不同的是，它只选用了四位二进制码中前10组代码，即用0000~1001分别代表它所对应的十进制数，余下的六组代码不用。</p>
+<p>常用的BCD码</p>
+<p><img src="/2019/04/05/3e0c16e6/1554461621075.png" alt="1554461621075"></p>
+<h2 id="1加法指令"><a class="markdownIt-Anchor" href="#1加法指令"></a> 1.加法指令</h2>
+<h3 id="1加法"><a class="markdownIt-Anchor" href="#1加法"></a> 1）加法</h3>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ADD OPRD1，OPRD2</span><br></pre></td></tr></table></figure>
+<p>功能：OPRD1 = OPRD1+OPRD2</p>
+<p>目的操作数可以是累加器、通用寄存器和存储器操作数</p>
+<p>加法影响6个状态标志位</p>
+<p>例如：源操作数是立即数，目的操作数是寄存器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MOV AX,DATA</span><br><span class="line">MOV DS,AX </span><br><span class="line">XOR AX,AX</span><br><span class="line">ADD AX,30</span><br></pre></td></tr></table></figure>
+<p>运行完成：</p>
+<p><img src="/2019/04/05/3e0c16e6/1554462029726.png" alt="1554462029726"></p>
+<p>标志位：</p>
+<p><img src="/2019/04/05/3e0c16e6/1554462054415.png" alt="1554462054415"></p>
+<h3 id="2带进位的加法"><a class="markdownIt-Anchor" href="#2带进位的加法"></a> 2）带进位的加法</h3>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ADC OPRD1，OPRD2</span><br></pre></td></tr></table></figure>
+<p>功能：OPRD1 = OPRD1+OPRD2+CF</p>
+<p>ADC多用于多字节运算时，例如32位数的加法</p>
+<p>例题：将两个32位的数据相加，放到另一个存储单元中</p>
+<p><img src="/2019/04/05/3e0c16e6/1554463157181.png" alt="1554463157181"></p>
+<p>当A1的低16位为0，A2的低16位为65535时，这时相加不会超过16位的表示范围，运算结果为：</p>
+<p><img src="/2019/04/05/3e0c16e6/1554463229750.png" alt="1554463229750"></p>
+<p>0D05FFFF</p>
+<p>如果将A1的低十六位改为1</p>
+<p><img src="/2019/04/05/3e0c16e6/1554463316702.png" alt="1554463316702"></p>
+<p>运行到ADD时CF=1</p>
+<p><img src="/2019/04/05/3e0c16e6/1554463289270.png" alt="1554463289270"></p>
+<p>运算结果为：</p>
+<p>0D06 0000，完成了32位数据的运算</p>
+<p><img src="/2019/04/05/3e0c16e6/1554463345872.png" alt="1554463345872"></p>
+<h3 id="3增量指令"><a class="markdownIt-Anchor" href="#3增量指令"></a> 3）增量指令</h3>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INC OPRD</span><br></pre></td></tr></table></figure>
+<p>功能：OPRD = OPRD+1</p>
+<p>该指令通常用于计数，修改指针地址，修改循环次数等，执行后结果影响除了CF的其他状态标志位</p>
+<p>例如增量地址指针：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">LEA DI,BUFF</span><br><span class="line">MOV AL,[DI]</span><br><span class="line">INC DI</span><br><span class="line">ADD AL,[DI]</span><br></pre></td></tr></table></figure>
+<h2 id="2减法指令"><a class="markdownIt-Anchor" href="#2减法指令"></a> 2.减法指令</h2>
+<h3 id="1一般减法"><a class="markdownIt-Anchor" href="#1一般减法"></a> 1）一般减法</h3>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SUB OPRD1，OPRD2</span><br></pre></td></tr></table></figure>
+<p>功能：OPRD1 = OPRD1 - OPRD2</p>
+<p>这个指令对所有的状态寄存器有影响</p>
+<h3 id="2带借位的减法"><a class="markdownIt-Anchor" href="#2带借位的减法"></a> 2）带借位的减法</h3>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SBB OPRD1，OPRD2</span><br></pre></td></tr></table></figure>
+<p>功能：OPRD1 = OPRD1 - OPRD2 - CF</p>
+<p>与ADC指令相同，该指令主要用于多字节的减法操作</p>
+<p>影响所有的状态标志位</p>
+<h3 id="3减量指令"><a class="markdownIt-Anchor" href="#3减量指令"></a> 3）减量指令</h3>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DEC OPRD</span><br></pre></td></tr></table></figure>
+<p>功能：OPRD = OPRD - 1</p>
+<p>用于修改指针循环次数等，结果影响除了CF以外的状态标志位</p>
+<h3 id="4取补指令"><a class="markdownIt-Anchor" href="#4取补指令"></a> 4）取补指令</h3>
+<p>一般格式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NEG OPRD</span><br></pre></td></tr></table></figure>
+<p>功能：对操作数进行取补的操作：OPRD = 0 - OPRD</p>
+<p>例如：</p>
+<p><img src="/2019/04/05/3e0c16e6/1554550023512.png" alt="1554550023512"></p>
+<p>结果为：</p>
+<p><img src="/2019/04/05/3e0c16e6/1554550103970.png" alt="1554550103970"></p>
+<p><img src="/2019/04/05/3e0c16e6/1554550126370.png" alt="1554550126370"></p>
+<p>求补运算的运算法则：将一个数（包括正数和负数）所有二进制位（包括符号位和数值位）取反，然后在最低位加上1。</p>
+<p><strong>注意</strong>：如果对字节数-128和字-32768 进行取补操作之后操作数没有变化，但是OF置位</p>
+<p>此指令影响所有的状态标志位，一般来说CF= 1，除了0之外</p>
+<p>5）比较指令</p>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CMP OPRD1，OPRD2</span><br></pre></td></tr></table></figure>
+<p>比较指令完成的是两个操作数的详见，使其结果表示再状态标志位上，而不送回结果，因此也叫不带送回的减法</p>
+<p>比较指令主要用于比较两个数的大小关系</p>
+<p>①若比较完成后ZF=1，那么这两个数相等</p>
+<p>②如果是两个无符号数进行比较，可以根据CF的值来判度大小</p>
+<p>​	如果CF = 0,则OPRD1≥ OPRD2 如果CF = 1 ,那么OPRD1 &lt; OPRD2</p>
+<p>③如果是两个带符号的数相比较,可根据OP和SF判断两个数的大小</p>
+<p>若OF ⊕ SF = 0 ,那么OPRD1 ≥ OPRD2,如果OF⊕SF=1,那么OPRD1＜OPRD2</p>
+<p>小知识:</p>
+<p>“⊙”是同或运算符(0⊙0=1,0⊙1=0,1⊙0=0,1⊙1=1)相同为真,相异为假<br>
+“&amp;” 是与运算符 (1&amp;1=1,1&amp;0=0,0&amp;1=0,0&amp;0=0)相当于乘法,又叫逻辑乘<br>
+“⊕”是异或运算符(0⊕0=0,0⊕1=1,1⊕0=1,1⊕1=0)相同为候,相异为真</p>
+<h2 id="3乘法指令"><a class="markdownIt-Anchor" href="#3乘法指令"></a> 3.乘法指令</h2>
+<p>8086/8088的乘法指令分为有符号数的乘法和无符号数的乘法指令两类</p>
+<h3 id="1无符号数的乘法"><a class="markdownIt-Anchor" href="#1无符号数的乘法"></a> 1)无符号数的乘法</h3>
+<p>一般格式:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MUL OPRD</span><br></pre></td></tr></table></figure>
+<p>功能:AX = (AL) × OPRD  8位操作数</p>
+<p>​	DX,AX = AX × OPRD  16位操作数</p>
+<p>该指令完成的是字节和字节的乘法,字与字的乘法,且默认一个操作数再AL或AX中,另一个操作数由指令给出,8位相乘结果为16位,放在AX中.16位相乘,结果为32位,高位放在DX中,低位放在AX中.</p>
+<p>若结果的高半部分不为0,那么CF,OF置1(表示AH和DX中有结果的有效位),反之CF和OP清零</p>
+<p><strong>注意</strong>:源操作数不能是立即数</p>
+<h3 id="2带符号数的乘法"><a class="markdownIt-Anchor" href="#2带符号数的乘法"></a> 2)带符号数的乘法</h3>
+<p>一般格式:IMUL OPRD</p>
+<p>功能:AX = AL× OPRD</p>
+<p>​	DX,AX = AX× OPRD</p>
+<p>当结果的高半部分不是低半部分符号位的扩展时,那么CF和OF置位(表示AH和DX中有有效数字),当结果的高半部分为低半部分的符号位的扩展时,那么CF和OF清零</p>
+<h2 id="4除法指令"><a class="markdownIt-Anchor" href="#4除法指令"></a> 4.除法指令</h2>
+<h3 id="1无符号数的除法指令"><a class="markdownIt-Anchor" href="#1无符号数的除法指令"></a> 1）无符号数的除法指令</h3>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DIV OPRD</span><br></pre></td></tr></table></figure>
+<p>功能：</p>
+<p>①商在AL，余数在AH，AX ÷ OPRD ；OPRD为字节操作数</p>
+<p>②商在AX，余数在DX，（DX，AX）÷ OPRD；OPRD为字操作数</p>
+<p>在除法指令中，默认AX，DX：AX为被除数，在字节运算时被除数是AX，在字运算中，被除数是DX：AX构成的32位数。</p>
+<p>OPRD可以是除了立即数的寻址方式，并且指令执行之后对所有的标志位都是没有意义的。</p>
+<h3 id="2带符号的除法指令"><a class="markdownIt-Anchor" href="#2带符号的除法指令"></a> 2）带符号的除法指令</h3>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">IDIV OPRD</span><br></pre></td></tr></table></figure>
+<p>IDIV指令和DIV基本类似，除了DX或AX的最高位表示被除数符号位，AX或AL的最高位表示商的符号位外，其他都一致。</p>
+<p>3）字节扩展指令</p>
+<p>由于8086/8088系统中字节和字除法的被除数是16位和32位，因此要把8位或者16位的最高位扩展到16位或者32位的最高位。</p>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CBW； convert Byte to Word</span><br></pre></td></tr></table></figure>
+<p>功能：执行该指令时，将AL的最高位扩展到AH，若D<sub>7</sub>=0，那么AH = 0，若D<sub>7</sub>= 1，那么AH= 0FFH</p>
+<h3 id="4字扩展指令"><a class="markdownIt-Anchor" href="#4字扩展指令"></a> 4）字扩展指令</h3>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CWD； convert Word to Double</span><br></pre></td></tr></table></figure>
+<p>该指令在执行时，AX的最高位D<sub>15</sub>扩展到DX，即D<sub>15</sub> = 0，DX = 0，D<sub>15</sub> = 1，DX = 0FFFFH</p>
+<p>CBW 和CWD指令均不影响标志位</p>
+<h3 id="5十进制调整指令"><a class="markdownIt-Anchor" href="#5十进制调整指令"></a> 5）十进制调整指令</h3>
+<p>就是以16进制表示10进制,假的10进制数</p>
+<table>
+<thead>
+<tr>
+<th>指令格式</th>
+<th>指令说明</th>
+<th>指令格式</th>
+<th>指令说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DAA</td>
+<td>压缩BCD的加法调整</td>
+<td>AAA</td>
+<td>非压缩BCD的加法调整</td>
+</tr>
+<tr>
+<td>DAS</td>
+<td>压缩BCD的减法调整</td>
+<td>AAS</td>
+<td>非压缩BCD的减法调整</td>
+</tr>
+<tr>
+<td>AAM</td>
+<td>乘法后的BCD调整</td>
+<td>AAD</td>
+<td>除法前的BCD调整</td>
+</tr>
+</tbody>
+</table>
+<p>例:</p>
+<p><img src="/2019/04/05/3e0c16e6/1554808065866.png" alt="1554808065866"></p>
+<p>运行ADD后,AL变为90H,实际上我们要显示96H</p>
+<p><img src="/2019/04/05/3e0c16e6/1554808097850.png" alt="1554808097850"></p>
+<p>再运行完DAA指令,AL变为</p>
+<p><img src="/2019/04/05/3e0c16e6/1554808152963.png" alt="1554808152963"></p>
+<p>再改为非压缩BCD码的加法</p>
+<p>例如:</p>
+<p><img src="/2019/04/05/3e0c16e6/1554810055692.png" alt="1554810055692"></p>
+<p>运算结果为:</p>
+<p><img src="/2019/04/05/3e0c16e6/1554810079553.png" alt="1554810079553"></p>
+<p>压缩BCD码和压缩BCD码进行压缩BCD运算十进制调整才会正确</p>
+<p>非压缩BCD码和非压缩BCD码进行非压缩BCD运算十进制调整才会正确</p>
+<p>非压缩BCD预算对压缩BCD调整结果是不正确的</p>
+<p>注意:BCD乘法和除法操作时,AAM出现在MUL之后,AAD出现在DIV之前</p>
+<h2 id="5逻辑指令和移位指令"><a class="markdownIt-Anchor" href="#5逻辑指令和移位指令"></a> 5.逻辑指令和移位指令</h2>
+<h3 id="1逻辑运算指令"><a class="markdownIt-Anchor" href="#1逻辑运算指令"></a> （1）逻辑运算指令</h3>
+<h4 id="1逻辑非"><a class="markdownIt-Anchor" href="#1逻辑非"></a> 1）逻辑非</h4>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NOT OPRD</span><br></pre></td></tr></table></figure>
+<p>功能：OPRD = OPRD的反码</p>
+<p>操作数可以是寄存器和存储器的内容</p>
+<p>例如：</p>
+<p><img src="/2019/04/05/3e0c16e6/1554884367973.png" alt="1554884367973"></p>
+<p>运行完NOT AL之后</p>
+<p><img src="/2019/04/05/3e0c16e6/1554884405398.png" alt="1554884405398"></p>
+<h4 id="2逻辑与"><a class="markdownIt-Anchor" href="#2逻辑与"></a> 2）逻辑与</h4>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AND OPRD1，OPRD2</span><br></pre></td></tr></table></figure>
+<p>功能：OPRD1 = OPRD1&amp; OPRD2</p>
+<p>按位相与</p>
+<p>其中目的操作数OPRD1可以是累加器，任一通用寄存器，或内存操作数（所有的存储器寻址方式），不可以是立即数，OPRD2可以是立即数，寄存器和内存操作数，指令运行后，CF = 0，OF = 0，标志位AF未定义</p>
+<p>例如：</p>
+<p><img src="/2019/04/05/3e0c16e6/1554884613105.png" alt="1554884613105"></p>
+<p>运行结束后：</p>
+<p><img src="/2019/04/05/3e0c16e6/1554884632766.png" alt="1554884632766"></p>
+<h4 id="3测试指令"><a class="markdownIt-Anchor" href="#3测试指令"></a> 3）测试指令</h4>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TEST OPRD1，OPRD2</span><br></pre></td></tr></table></figure>
+<p>功能：本指令完成和AND相同的操作，但是结果只显示在标志位上，并不送回，可以用来检测某一个操作数的某个位。</p>
+<p>例如测试第一位是不是0</p>
+<p><img src="/2019/04/05/3e0c16e6/1554884770068.png" alt="1554884770068"></p>
+<p>若运行之后AL和01H与，ZF为0，则说明第一位为0</p>
+<p><img src="/2019/04/05/3e0c16e6/1554884799532.png" alt="1554884799532"></p>
+<p>ZF为0，说明AL的第一位不是0</p>
+<p><img src="/2019/04/05/3e0c16e6/1554884843222.png" alt="1554884843222"></p>
+<p>运行后，ZF = 1 ，说明AL的第一位为0</p>
+<h4 id="4逻辑或指令"><a class="markdownIt-Anchor" href="#4逻辑或指令"></a> 4）逻辑或指令</h4>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">OR OPRD1，OPRD2</span><br></pre></td></tr></table></figure>
+<p>功能 OPRD1 = OPRD1 | OPRD2</p>
+<p>都是0才是0，有一个1是1</p>
+<p>OPRD1可以是累加器，任意通用寄存器或者内存操作数，OPRD2可以是立即数、寄存器也可以是内存操作数</p>
+<p>此指令运行以后，CF = 0，OF = 0，PF，ZF，SF表示运算的结果，AF未定义</p>
+<p>此指令可以执行置1操作</p>
+<p>例如：OR AX ，0FFFH；将AX的低12置1</p>
+<p><img src="/2019/04/05/3e0c16e6/1554885416013.png" alt="1554885416013"></p>
+<p>执行后：</p>
+<p><img src="/2019/04/05/3e0c16e6/1554885449036.png" alt="1554885449036"></p>
+<h4 id="5异或操作"><a class="markdownIt-Anchor" href="#5异或操作"></a> 5）异或操作</h4>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">XOR OPRD1，OPRD2</span><br></pre></td></tr></table></figure>
+<p>功能：OPRD1 = OPRD1⊕OPRD2</p>
+<p>相同为0，相异为1</p>
+<p>目的操作数可以是累加器可以是任何一个通用寄存器可以是内存操作数，除了立即数之外的寻址方式，源操作数可以是立即数，内存操作数和寄存器</p>
+<p>指令执行后CF = 0，OF = 0，SF ZF PF反映操作数的结果，AF未定义</p>
+<p>该指令可以完成某些位的不变和某些位的按位取反操作，不变的位和0相异或，取反的位和1相异或，如果该指令和自己相异或的话可以实现清0操作，是初始化的有效操作</p>
+<p>例如：</p>
+<p><img src="/2019/04/05/3e0c16e6/1554894261959.png" alt="1554894261959"></p>
+<p>执行完后，AX清零</p>
+<p><img src="/2019/04/05/3e0c16e6/1554894297635.png" alt="1554894297635"></p>
+<h3 id="2移位指令"><a class="markdownIt-Anchor" href="#2移位指令"></a> （2）移位指令</h3>
+<h4 id="1算数逻辑移位指令"><a class="markdownIt-Anchor" href="#1算数逻辑移位指令"></a> 1）算数/逻辑移位指令</h4>
+<h5 id="1算数移位指令或逻辑左移指令"><a class="markdownIt-Anchor" href="#1算数移位指令或逻辑左移指令"></a> ①算数移位指令或逻辑左移指令</h5>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SAL&#x2F;SHL OPRD，M</span><br></pre></td></tr></table></figure>
+<p>功能：将操作数OPRD算数左移或逻辑左移M位，每移位一次，最低位补0，最高位进入CF，两者功能完全相同</p>
+<p><img src="/2019/04/05/3e0c16e6/1554980147353.png" alt="1554980147353"></p>
+<p>每次移动一位时，若移动完成之后，CF和最高位不一致，则OF = 1，否则OF = 0，标志位PF SF ZF表示移位后的结果。</p>
+<p>例如：</p>
+<p><img src="/2019/04/05/3e0c16e6/1554981296956.png" alt="1554981296956"></p>
+<p>结果：</p>
+<p><img src="/2019/04/05/3e0c16e6/1554981329461.png" alt="1554981329461"></p>
+<h5 id="2算数右移指令"><a class="markdownIt-Anchor" href="#2算数右移指令"></a> ②算数右移指令</h5>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SAR OPRD，M</span><br></pre></td></tr></table></figure>
+<p>功能：将OPRD算数右移M位</p>
+<p><img src="/2019/04/05/3e0c16e6/1554980472973.png" alt="1554980472973"></p>
+<p>保持最高位的符号不变，最低位移至CF，指令影响CF SF OF PF ZF。</p>
+<p>例如：</p>
+<p><img src="/2019/04/05/3e0c16e6/1554981465525.png" alt="1554981465525"></p>
+<p>运行之后：</p>
+<p><img src="/2019/04/05/3e0c16e6/1554981502400.png" alt="1554981502400"></p>
+<p>说明做高位补1</p>
+<h5 id="3逻辑右移指令"><a class="markdownIt-Anchor" href="#3逻辑右移指令"></a> ③逻辑右移指令</h5>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SHR OPRD，M</span><br></pre></td></tr></table></figure>
+<p>功能：将操作数OPRD逻辑右移M位</p>
+<p><img src="/2019/04/05/3e0c16e6/1554980625497.png" alt="1554980625497"></p>
+<p>最高位补0，最低位移到CF，指定的移动位数是1时，若移动完成后，操作数的最高位和操作数的次高位不一致。则标志OF = 1，反之OF = 0；</p>
+<p>例如：</p>
+<p><img src="/2019/04/05/3e0c16e6/1554981555309.png" alt="1554981555309"></p>
+<p>运行之后：</p>
+<p><img src="/2019/04/05/3e0c16e6/1554981572616.png" alt="1554981572616"></p>
+<p>溢出标志位OF</p>
+<p><img src="/2019/04/05/3e0c16e6/1554981594663.png" alt="1554981594663"></p>
+<h4 id="2循环移位指令"><a class="markdownIt-Anchor" href="#2循环移位指令"></a> 2）循环移位指令</h4>
+<p>一般格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ROL OPRD,M; 功能：循环左移M位</span><br><span class="line">ROR OPRD,M; 功能：循环右移M位</span><br><span class="line">RCL OPRD,M; 功能：带进位循环左移M位</span><br><span class="line">RCR OPRD,M; 功能：带进位循环右移M位</span><br></pre></td></tr></table></figure>
+<p>以上四条指令M是移位的次数，可以是1或者由CL的值指出</p>
+<p><img src="/2019/04/05/3e0c16e6/1554982066435.png" alt="1554982066435"></p>
+<p>对于ROL指令，每移动一次，最高位一方面进入CF，一方面返回操作数的最低位，如图a所示，若移动的位数为1，那么移位之后操作数的最高位和CF不一致时，OF= 1，反之OF = 0，可以用来表示循环移位之后的符号位是否相同。</p>
+<p>对于ROR指令，每移动一次，最低位进入CF，同时返回操作数的最高位。规定操作数移动位数是1时，若操作数的最高位和操作数的次高位不一致时，OF = 1，反之OF = 0；如图b所示。</p>
+<p>RCL把CF包含在移动的操作数中，每移动一次，操作数的最高位进入CF，CF进入操作数的最低位，规定操作数移动位数是1时，若操作数的最高位和CF不一致，OF = 1，反之OF = 0指令只影响CF和OF，如图c所示。</p>
+<p>RCR把CF包含在移动的操作数中，操作数的最低位一方面进入CF，一方面进入操作数的最高位，规定操作数移动位数是1时，若操作数的最高位和操作数的次高位不一致时，OF = 1，反之OF = 0，本指令只影响CF和OF，如图d所示。</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\03\31\91de029c.html" rel="bookmark">微机原理及接口技术之数据传送指令</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\03\31\75142c3c.html" rel="bookmark">微机原理与接口技术之寻址方式</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\04\06\3729b804.html" rel="bookmark">微机原理与接口技术之原码反码和补码</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\04\19\71081ab0.html" rel="bookmark">微机原理与接口技术之标志处理和CPU控制类指令</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\04\17\d7d54c39.html" rel="bookmark">微机原理与接口技术之字符串操作</a></div>
+    </li>
+  </ul>
+
+        <div class="reward-container">
+  <div>喜欢就支持我吧!</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="Chen Chong 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.png" alt="Chen Chong 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E5%BE%AE%E6%9C%BA%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8E%A5%E5%8F%A3%E6%8A%80%E6%9C%AF/" rel="tag"><i class="fa fa-tag"></i> 微机原理与接口技术</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/04/03/b40dc517.html" rel="prev" title="Hexo主题自定义">
+      <i class="fa fa-chevron-left"></i> Hexo主题自定义
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/04/06/3729b804.html" rel="next" title="微机原理与接口技术之原码反码和补码">
+      微机原理与接口技术之原码反码和补码 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#算数运算指令"><span class="nav-text"> 算数运算指令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1加法指令"><span class="nav-text"> 1.加法指令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1加法"><span class="nav-text"> 1）加法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2带进位的加法"><span class="nav-text"> 2）带进位的加法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3增量指令"><span class="nav-text"> 3）增量指令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2减法指令"><span class="nav-text"> 2.减法指令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1一般减法"><span class="nav-text"> 1）一般减法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2带借位的减法"><span class="nav-text"> 2）带借位的减法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3减量指令"><span class="nav-text"> 3）减量指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4取补指令"><span class="nav-text"> 4）取补指令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3乘法指令"><span class="nav-text"> 3.乘法指令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1无符号数的乘法"><span class="nav-text"> 1)无符号数的乘法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2带符号数的乘法"><span class="nav-text"> 2)带符号数的乘法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4除法指令"><span class="nav-text"> 4.除法指令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1无符号数的除法指令"><span class="nav-text"> 1）无符号数的除法指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2带符号的除法指令"><span class="nav-text"> 2）带符号的除法指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4字扩展指令"><span class="nav-text"> 4）字扩展指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5十进制调整指令"><span class="nav-text"> 5）十进制调整指令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5逻辑指令和移位指令"><span class="nav-text"> 5.逻辑指令和移位指令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1逻辑运算指令"><span class="nav-text"> （1）逻辑运算指令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1逻辑非"><span class="nav-text"> 1）逻辑非</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2逻辑与"><span class="nav-text"> 2）逻辑与</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3测试指令"><span class="nav-text"> 3）测试指令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4逻辑或指令"><span class="nav-text"> 4）逻辑或指令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5异或操作"><span class="nav-text"> 5）异或操作</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2移位指令"><span class="nav-text"> （2）移位指令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1算数逻辑移位指令"><span class="nav-text"> 1）算数&#x2F;逻辑移位指令</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1算数移位指令或逻辑左移指令"><span class="nav-text"> ①算数移位指令或逻辑左移指令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2算数右移指令"><span class="nav-text"> ②算数右移指令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3逻辑右移指令"><span class="nav-text"> ③逻辑右移指令</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2循环移位指令"><span class="nav-text"> 2）循环移位指令</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chen Chong"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Chen Chong</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/hhchenchong" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;hhchenchong" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/hhchenchong@163.com" title="E-Mail → hhchenchong@163.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+     <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=448184048&auto=0&height=66"></iframe>
+
+今日诗词：<br>
+<span id="jinrishici-sentence">正在加载今日诗词....</span><br>
+
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+<img src="https://api.xygeng.cn/bing/1920.php" alt="Bing每日图片超高清" />
+
+<!-- hhchenchong -->
+今日天气：<br>
+<div id="weather-view-he"></div>
+<script>
+WIDGET = {ID: 'ESvcuq32Fw'};
+</script>
+<script type="text/javascript" src="https://apip.weatherdt.com/view/static/js/r.js?v=1111"></script>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="noopener" target="_blank">鲁ICP备20004309号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chen Chong</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el: '#valine-comments',
+      verify: false,
+      notify: true,
+      appId: 'L2EBDsymQXKYwJWyF8ACJ4de-gzGzoHsz',
+      appKey: '4hFeY20jBK2eAtpoNv91VDsn',
+      placeholder: "欢迎评论",
+      avatar: 'mm',
+      meta: guest,
+      pageSize: '10' || 10,
+      visitor: false,
+      lang: '' || 'zh-cn',
+      path: location.pathname,
+      recordIP: false,
+      serverURLs: ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
